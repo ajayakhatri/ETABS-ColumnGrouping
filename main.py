@@ -1,12 +1,3 @@
-# %% [markdown]
-# This code does following:
-# 1. Connects to a running ETABS window
-# 2. Reads reinforcement data from data.xlsx.
-# 3. Selects columns in ground floor.
-# 4. Finds columns lying just above it on upper floors.
-# 5. Assign Groups to the columns based on percentage rebar of column in ground floor.
-
-# %%
 import comtypes.client
 import pandas as pd
 
@@ -14,12 +5,10 @@ import pandas as pd
 ETABSObject = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
 SapModel = ETABSObject.SapModel
 
-
-# %%
 df_data=pd.read_excel("data.xlsx")
 
-# %%
-#getColumns returns list of frames with Design Orientation 1
+
+# getColumns returns list of frames with Design Orientation 1
 def getColumns(frames): 
         columns=[] 
         for frame in frames:
@@ -33,14 +22,13 @@ def startPoint(x):
 def location(x):
     return SapModel.PointObj.GetCoordCartesian(x)
 
-# %%
+
 allFrames =SapModel.FrameObj.GetAllFrames()[1]
 fristStoryFrames = SapModel.FrameObj.GetNameListOnStory("Story1")[1]
 
 allColumns=getColumns(allFrames)
 fristStoryColumns=getColumns(fristStoryFrames)
 
-# %%
 # sameLocationColumn returns a list containing list of columns lying in same (x,y) coordinate
 def sameLocationColumn(columns, groundColumns):
     groups=[]
@@ -53,11 +41,10 @@ def sameLocationColumn(columns, groundColumns):
         groups.append(group)
     return groups
 
-# %%
 sameLocationColumn=sameLocationColumn(allColumns,fristStoryColumns)
 
-# %%
-#adds rebarPercent Column in the data table
+
+# adds rebarPercent Column in the data table
 def rebarPercent(df_data):
     percentRebar=[]
     if not "rebarPercent" in df_data:
@@ -67,10 +54,9 @@ def rebarPercent(df_data):
     else:
         print("ERROR COLUMN ALREADY EXIST!!!")
 
-# %%
 rebarPercent(df_data)
 
-# %%
+
 # assigns column in groups based on provided ranges of percentage reinforcement
 def rebarGroup(df_data, lower, upper,sameLocationColumn, groupName):
     group=[]
@@ -90,28 +76,26 @@ def rebarGroup(df_data, lower, upper,sameLocationColumn, groupName):
     print("DONE")
     return list(dict.fromkeys(group))
 
-# %%
+
 
 low=0
 high=0.824353912301962
 groupname="C501"
 C501=rebarGroup(df_data,low,high,sameLocationColumn,groupname)
 
-# %%
+
 low=0.824353912301962
 high=1.46775208775715
 groupname="C502"
 C502=rebarGroup(df_data,low,high,sameLocationColumn,groupname)
 
 
-# %%
+
 low=1.46775208775715
 high=1.75049542658023
 groupname="C503"
 C503=rebarGroup(df_data,low,high,sameLocationColumn,groupname)
 
-
-# %%
 
 low=1.75049542658023
 high=2.01061929829747
