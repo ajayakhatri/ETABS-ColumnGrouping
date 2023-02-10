@@ -6,5 +6,5 @@ This code does following:
 2. Reads reinforcement data from data.xlsx.
 3. Selects columns in ground floor.
 4. Finds columns lying just above it on upper floors.
-5. Assign Groups to the columns based on percentage rebar of column in ground floor.
+5. Assign Groups to the columns based on percentage of reinforcement of column in ground floor.
 
